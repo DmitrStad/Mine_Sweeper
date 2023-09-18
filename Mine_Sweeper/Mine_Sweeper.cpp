@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     setlocale(LC_ALL, "ru");
     bool GameOn = 1;
     bool FirstStep = 0;
-    int height = 20, width = 20;
+    int height = 10, width = 10;
     int x, y;
     Field sweeper(width, height);
     
