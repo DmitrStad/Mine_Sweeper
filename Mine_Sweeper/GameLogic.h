@@ -18,6 +18,7 @@ public:
     bool OneStep(int x, int y);
     void PrintMatrix();
     bool MarkCell(int x, int y);
+    void PrintDeadScreen(int x, int y);
 
 private:
     int height;
