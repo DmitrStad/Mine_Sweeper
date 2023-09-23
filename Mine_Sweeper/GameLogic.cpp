@@ -13,8 +13,8 @@ Field::Field(int width, int height) {
 
 void Field::SetMines(int i, int j) {
 
-    std::default_random_engine randomEngine(time(0)); // Генератор случайных чисел
-    std::uniform_int_distribution<int> distribution(0, height - 1); // Равномерное распределение от 0 до N-1
+    std::default_random_engine randomEngine(time(0)); // ГѓГҐГ­ГҐГ°Г ГІГ®Г° Г±Г«ГіГ·Г Г©Г­Г»Гµ Г·ГЁГ±ГҐГ«
+    std::uniform_int_distribution<int> distribution(0, height - 1); // ГђГ ГўГ­Г®Г¬ГҐГ°Г­Г®ГҐ Г°Г Г±ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ Г®ГІ 0 Г¤Г® N-1
     int tmp = mines;
     while (tmp > 0) {
         int x = distribution(randomEngine);
@@ -43,9 +43,11 @@ void Field::Count_Mines(int x, int y) {
 }
 
 bool Field::OneStep(int x, int y) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 7);
     if (field[x][y]) {
-        PrintMatrix();
-        std::cout << "Мина в точке " << x << " " << y << "\nИгра Окончена" << "\n";
+        PrintDeadScreen(x, y);
+        std::cout << " Game Over" << "\n";
         return 0;
     }
 
@@ -75,40 +77,88 @@ bool Field::OneStep(int x, int y) {
 
 void Field::PrintMatrix() {
     clearConsoleScreen();
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
 
-            if (is_cell_visible[i][j]) {
+            if (is_cell_visible[i][j] && !mark[i][j]) {
+                SetConsoleTextAttribute(hConsole, 3);
                 std::cout << neighbours[i][j] << " ";
             }
 
-            else if (mark[i][j])
+            else if (mark[i][j]) {
+                SetConsoleTextAttribute(hConsole, 4);
                 std::cout << "? ";
+            }
 
-            else
+            else if (is_cell_visible[i][j] && field[i][j]) {
+                SetConsoleTextAttribute(hConsole, 5);
+                std::cout << "M ";
+            }
+
+            else {
+                SetConsoleTextAttribute(hConsole, 7);
                 std::cout << "* ";
+            }
         }
         std::cout << "\n";
     }
-
-    std::cout << "Мин найдено " << counter << " из " << mines << "\n";
+    SetConsoleTextAttribute(hConsole, 7);
+    std::cout << "Mines Found " << counter << " of " << mines << " total\n";
 }
 
 bool Field::MarkCell(int x, int y) {
-    mark[x][y] = 1;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 7);
+    if (mark[x][y])
+        mark[x][y] = 0;
+    else
+        mark[x][y] = 1;
     if (field[x][y])
         counter++;
 
     if (counter == mines) {
         PrintMatrix();
-        std::cout << "Победа!";
+        std::cout << "You won!";
         return 0;
     }
     PrintMatrix();
     return 1;
 }
 
-void clearConsoleScreen() { //функция очистки консоли
+void Field::PrintDeadScreen(int x, int y) {
+    clearConsoleScreen();
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+
+            if (is_cell_visible[i][j] && !mark[i][j]) {
+                SetConsoleTextAttribute(hConsole, 3);
+                std::cout << neighbours[i][j] << " ";
+            }
+
+            else if (mark[i][j]) {
+                SetConsoleTextAttribute(hConsole, 4);
+                std::cout << "? ";
+            }
+
+            else if (x == i && y == j && field[i][j]) {
+                SetConsoleTextAttribute(hConsole, 5);
+                std::cout << "M ";
+            }
+
+            else {
+                SetConsoleTextAttribute(hConsole, 7);
+                std::cout << "* ";
+            }
+        }
+        std::cout << "\n";
+    }
+    SetConsoleTextAttribute(hConsole, 7);
+    std::cout << "Mines Found " << counter << " of " << mines << " total\n";
+}
+
+void clearConsoleScreen() { //ГґГіГ­ГЄГ¶ГЁГї Г®Г·ГЁГ±ГІГЄГЁ ГЄГ®Г­Г±Г®Г«ГЁ
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD coord = { 0, 0 };
     DWORD count;
