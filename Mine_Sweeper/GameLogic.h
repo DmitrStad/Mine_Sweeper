@@ -9,6 +9,15 @@
 #undef min
 #undef max
 
+struct Point {
+public:
+    Point(int x, int y) { this->x = x; this->y = y; }
+    int Get_X() const { return x; }
+    int Get_Y() const { return y; }
+private:
+    int x, y;
+};
+
 class Field
 {
 public:
@@ -27,6 +36,7 @@ private:
     std::vector<std::vector<bool>> is_cell_visible;
     std::vector<std::vector<int>> neighbours;
     std::vector<std::vector<bool>> mark;
+    std::vector<Point> points;
     int counter;
     int mines;
 };
