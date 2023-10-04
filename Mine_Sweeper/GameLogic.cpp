@@ -69,9 +69,7 @@ bool Field::OneStep(int x, int y) {
     }
     else
         is_cell_visible[x][y] = 1;
-
     PrintMatrix();
-
     return 1;
 }
 
@@ -114,8 +112,17 @@ bool Field::MarkCell(int x, int y) {
         mark[x][y] = 0;
     else
         mark[x][y] = 1;
-    if (field[x][y])
+    if (field[x][y] && mark[x][y]) {
+        Point point(x, y);
+        points.push_back(point);
+        for (int i = 0; i < points.size() - 1; i++) {
+            if (points[i].Get_X() == x && points[i].Get_Y() == y) {
+                counter--;
+                break;
+            }
+        }
         counter++;
+    }
 
     if (counter == mines) {
         PrintMatrix();
@@ -125,7 +132,6 @@ bool Field::MarkCell(int x, int y) {
     PrintMatrix();
     return 1;
 }
-
 void Field::PrintDeadScreen(int x, int y) {
     clearConsoleScreen();
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
