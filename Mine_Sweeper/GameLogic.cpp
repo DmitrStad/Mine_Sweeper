@@ -1,5 +1,12 @@
 #include "GameLogic.h"
 
+/**
+  * @brief  Конструктор структуры Field
+  * @param  int width - ширина игрового поля
+  * @param  int height - высота игрового поля
+  * @retrival None
+  */
+
 Field::Field(int width, int height) {
     this->height = height;
     this->width = width;
@@ -11,10 +18,17 @@ Field::Field(int width, int height) {
     mark.resize(width, std::vector<bool>(height, false));
 }
 
+/**
+  * @brief  Функция, помещающая мины на игровое поле
+  * @param  int i - координата мины по Ox
+  * @param  int j - координата мины по Oy
+  * @retrival None
+  */
+
 void Field::SetMines(int i, int j) {
 
-    std::default_random_engine randomEngine(time(0)); // Ãåíåðàòîð ñëó÷àéíûõ ÷èñåë
-    std::uniform_int_distribution<int> distribution(0, height - 1); // Ðàâíîìåðíîå ðàñïðåäåëåíèå îò 0 äî N-1
+    std::default_random_engine randomEngine(time(0)); 
+    std::uniform_int_distribution<int> distribution(0, height - 1); 
     int tmp = mines;
     while (tmp > 0) {
         int x = distribution(randomEngine);
@@ -31,6 +45,13 @@ void Field::SetMines(int i, int j) {
     }
 }
 
+/**
+  * @brief  Счётчик мин на поле
+  * @param  int x - координата клетки по Ox
+  * @param  int y - координата клетки по Oy
+  * @retrival None
+  */
+
 void Field::Count_Mines(int x, int y) {
     for (unsigned int i = std::max(0, x - 1); i <= std::min(width - 1, x + 1); i++) {
         for (unsigned int j = std::max(0, y - 1); j <= std::min(height - 1, y + 1); j++) {
@@ -41,6 +62,13 @@ void Field::Count_Mines(int x, int y) {
         }
     }
 }
+
+/**
+  * @brief  Рачсчёт игроового поля после хода игрока
+  * @param  int x - координата клетки по Ox
+  * @param  int y - координата клетки по Oy
+  * @retrival bool - 0 конец игры, 1 - игра продолжается
+  */
 
 bool Field::OneStep(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -72,6 +100,12 @@ bool Field::OneStep(int x, int y) {
     PrintMatrix();
     return 1;
 }
+
+/**
+  * @brief  Функция отрисовки игрового поля
+  * @param  None
+  * @retrival None
+  */
 
 void Field::PrintMatrix() {
     clearConsoleScreen();
@@ -105,6 +139,13 @@ void Field::PrintMatrix() {
     std::cout << "Mines Found " << counter << " of " << mines << " total\n";
 }
 
+/**
+  * @brief  Пометка отжельно взятой клетки, в зависимости от её значения 
+  * @param  int x - координата клетки по Ox
+  * @param  int y - координата клетки по Oy
+  * @retrival bool - 0 число расрытых мин равняется общему числу мин и игрок выигрываеи, 1 - игра продолжается
+  */
+
 bool Field::MarkCell(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 7);
@@ -132,6 +173,14 @@ bool Field::MarkCell(int x, int y) {
     PrintMatrix();
     return 1;
 }
+
+/**
+  * @brief  Отрисовка игрового поля при окончании игры
+  * @param  int x - координата клетки по Ox
+  * @param  int y - координата клетки по Oy
+  * @retrival None
+  */
+
 void Field::PrintDeadScreen(int x, int y) {
     clearConsoleScreen();
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -164,7 +213,13 @@ void Field::PrintDeadScreen(int x, int y) {
     std::cout << "Mines Found " << counter << " of " << mines << " total\n";
 }
 
-void clearConsoleScreen() { //ôóíêöèÿ î÷èñòêè êîíñîëè
+**
+  * @brief  Очистка игрового поля
+  * @param  None
+  * @retrival None
+  */
+
+void clearConsoleScreen() { 
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD coord = { 0, 0 };
     DWORD count;
